@@ -63,7 +63,8 @@ class StudentList(Resource):
         "Success",
         api.model(
             "Create Student",
-            {MSG: fields.String("Student created with id: XXXXXXXXXXXXXXXXXXXXXXXX")},
+            {MSG: fields.String(
+                "Student created with id: XXXXXXXXXXXXXXXXXXXXXXXX")},
         ),
     )
     @api.response(
@@ -71,7 +72,8 @@ class StudentList(Resource):
         "Invalid Request",
         api.model(
             "Create Student: Bad Request",
-            {MSG: fields.String("Invalid value provided for one of the fields")},
+            {MSG: fields.String(
+                "Invalid value provided for one of the fields")},
         ),
     )
     def post(self):
@@ -126,7 +128,8 @@ class Student(Resource):
         "Student Update Information Not Acceptable",
         api.model(
             "Update Student: Not Acceptable",
-            {MSG: fields.String("Invalid value provided for one of the fields")},
+            {MSG: fields.String(
+                "Invalid value provided for one of the fields")},
         ),
     )
     def put(self, email):
@@ -155,3 +158,17 @@ class Student(Resource):
             return {MSG: "Student not found"}, HTTPStatus.NOT_FOUND
 
         return {MSG: "Student updated"}, HTTPStatus.OK
+
+    @api.doc("Delete a student given their email")
+    @api.response(
+        HTTPStatus.OK,
+        "Success",
+        api.model("Delete Student", {MSG: fields.String("Student deleted")}),
+    )
+    def delete(self, email):
+        student_resource = StudentResource()
+        deleted = student_resource.delete_student_by_email(email)
+
+        if not deleted:
+            return {MSG: "Student not found"}, HTTPStatus.NOT_FOUND
+        return {MSG: "Student deleted successfully"}, HTTPStatus.OK
